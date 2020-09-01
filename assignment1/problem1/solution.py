@@ -5,8 +5,6 @@
 
 
 def merge_two_sorted_arrays(array1, array2):
-    array1 = array1.split(" ")
-    array2 = array2.split(" ")
     output_array = [int(array1[0]) + int(array2[0])]
     size_count1 = 1
     size_count2 = 1
@@ -28,8 +26,8 @@ def merge_two_sorted_arrays(array1, array2):
             return output_array
 
 
-array1 = input()
-array2 = input()
+array1 = list(map(int, input().split(" ")))
+array2 = list(map(int, input().split(" ")))
 result = merge_two_sorted_arrays(array1, array2)
 for i in range(len(result)):
     if i == len(result) - 1:
