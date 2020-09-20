@@ -43,11 +43,11 @@ def merge_and_count(array1, array2):
     if length1 == 0:
         for i in range(pointer2, len(array2)):
             output_array.append(array2[i])
-            return output_array, count
+        return output_array, count
     elif length2 == 0:
         for i in range(pointer1, len(array1)):
             output_array.append(array1[i])
-            return output_array, count
+        return output_array, count
 
 size = int(input())
 array = list(map(int, input().split(" ")))
