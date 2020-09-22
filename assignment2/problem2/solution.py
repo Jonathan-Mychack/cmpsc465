@@ -62,7 +62,7 @@ class Stack:
             return temp.value
 
 
-def merge_two_sorted_arrays(array1, array2):
+def merge_two_sorted_arrays(pstar, array1, array2):
     output_array = []
     size_count1 = 0
     size_count2 = 0
@@ -74,7 +74,7 @@ def merge_two_sorted_arrays(array1, array2):
             output_array.append(array2[size_count2])
             size_count2 += 1
         else:
-            if array1[size_count1] <= array2[size_count2]:
+            if find_angle(pstar, array1[size_count1]) <= find_angle(pstar, array2[size_count2]):
                 output_array.append(array1[size_count1])
                 size_count1 += 1
             else:
@@ -84,18 +84,40 @@ def merge_two_sorted_arrays(array1, array2):
             return output_array
 
 
-def merge_sort(size, array):
+def merge_sort(pstar, size, array):
     if size <= 1:
         return array
     
     if size % 2 == 0:
-        first_half = merge_sort(size/2, array[:int(size/2)])
-        second_half = merge_sort(size/2, array[int(size/2):])
+        first_half = merge_sort(pstar, size/2, array[:int(size/2)])
+        second_half = merge_sort(pstar, size/2, array[int(size/2):])
     else:
-        first_half = merge_sort((size/2) - 0.5, array[:int((size/2) - 0.5)])
-        second_half = merge_sort((size/2) + 0.5, array[int((size/2) - 0.5):])
-    result = merge_two_sorted_arrays(first_half, second_half)
+        first_half = merge_sort(pstar, (size/2) - 0.5, array[:int((size/2) - 0.5)])
+        second_half = merge_sort(pstar, (size/2) + 0.5, array[int((size/2) - 0.5):])
+    result = merge_two_sorted_arrays(pstar, first_half, second_half)
     return result
+
+def find_angle(pstar, point):
+    vector = [point[0] - pstar[0], point[1] - pstar[1]]
+    if vector[1] == 0:
+        if (vector[0] < 0):
+            return 180
+        elif (vector[0] >= 0):
+            return 0
+    magnitude = math.sqrt((vector[0] ** 2) + (vector[1] ** 2))
+    normal = [vector[0] / magnitude, vector[1] / magnitude]
+    angle = math.acos(normal[0])
+    return angle
+
+def check_orientation(pstar, point1, point2):
+    vector1 = [pstar[0] - point1[0], pstar[1] - point1[1]]
+    vector2 = [point1[0] - point2[0], point1[1] - point2[1]]
+    if ((vector1[0] * vector2[1]) - (vector1[1] * vector2[0])) > 0:
+        return 'turning left'
+    elif ((vector1[0] * vector2[1]) - (vector1[1] * vector2[0])) < 0:
+        return 'turning right'
+    else:
+        return 'colinear'
 
 
 def graham_scan(points):
@@ -105,6 +127,8 @@ def graham_scan(points):
             smallest_coord[0] = i
             smallest_coord[1] = points[i][1]
     p_star = points[smallest_coord[0]]
+    sorted_array = merge_sort(p_star, len(points), points)
+    return graham_scan_core(sorted_array)
 
 
 def graham_scan_core(points):
@@ -112,15 +136,30 @@ def graham_scan_core(points):
     s.push(points[0])
     s.push(points[1])
     s.push(points[2])
-    for k in range(4, len(points)):
+    for k in range(3, len(points)):
         while s.isEmpty() == False:
+            if len(s) < 3:
+                break
             pa = s.top.value
             pb = s.top.next.value
+            if check_orientation(points[0], pa, pb) == 'turning right':
+                s.pop()
+                continue
+            elif check_orientation(points[0], pa, pb) == 'turning left':
+                break
+        s.push(points[k])
+    return len(s)
 
             
 point_array = []
+point_array_dual = []
 for i in range(int(input())):
-    line = list(map(int, input().split(" ")))
+    line = list(map(float, input().split(" ")))
     line[1] *= -1
     point_array.append(line)
-
+    line[0] *= -1
+    line[0] *= -1
+    point_array_dual.append(line)
+half = graham_scan(point_array)
+other = graham_scan(point_array_dual)
+print(half, other)
