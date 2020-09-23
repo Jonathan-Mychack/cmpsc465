@@ -110,11 +110,11 @@ def find_angle(pstar, point):
     return angle
 
 def check_orientation(pstar, point1, point2):
-    vector1 = [pstar[0] - point1[0], pstar[1] - point1[1]]
-    vector2 = [point1[0] - point2[0], point1[1] - point2[1]]
+    vector1 = [point2[0] - point1[0], point2[1] - point1[1]]
+    vector2 = [point1[0] - pstar[0], point1[1] - pstar[1]]
     if ((vector1[0] * vector2[1]) - (vector1[1] * vector2[0])) > 0:
         return 'turning left'
-    elif ((vector1[0] * vector2[1]) - (vector1[1] * vector2[0])) < 0:
+    elif ((vector1[0] * vector2[1]) - (vector2[0] * vector1[1])) < 0:
         return 'turning right'
     else:
         return 'colinear'
@@ -137,29 +137,45 @@ def graham_scan_core(points):
     s.push(points[1])
     s.push(points[2])
     for k in range(3, len(points)):
-        while s.isEmpty() == False:
-            if len(s) < 3:
-                break
+        while s.count > 1:
             pa = s.top.value
             pb = s.top.next.value
-            if check_orientation(points[0], pa, pb) == 'turning right':
+            pk = points[k]
+            orientation = check_orientation(pk, pa, pb)
+            if orientation == 'turning right':
                 s.pop()
                 continue
-            elif check_orientation(points[0], pa, pb) == 'turning left':
+            elif orientation == 'turning left':
                 break
         s.push(points[k])
-    return len(s)
+    return s
 
             
 point_array = []
-point_array_dual = []
 for i in range(int(input())):
     line = list(map(float, input().split(" ")))
     line[1] *= -1
     point_array.append(line)
-    line[0] *= -1
-    line[0] *= -1
-    point_array_dual.append(line)
-half = graham_scan(point_array)
-other = graham_scan(point_array_dual)
-print(half, other)
+temp_array = graham_scan(point_array)
+
+result_array = []
+for i in range(len(temp_array)):
+    result_array.append(temp_array.peek())
+    temp_array.pop()
+
+smallest_x = [-1, 101]      # [index, value]
+for i in range(len(result_array)):
+    if result_array[i][0] < smallest_x[1]:
+        smallest_x[0] = i
+        smallest_x[1] = result_array[i][0]
+
+largest_x = [-1, -101]      # [index, value]
+for i in range(len(result_array)):
+    if result_array[i][0] > largest_x[1]:
+        largest_x[0] = i
+        largest_x[1] = result_array[i][0]
+
+lower_envelope = abs(largest_x[0] - smallest_x[0]) + 1
+upper_envelope = (len(result_array) - lower_envelope) + 2
+
+print(lower_envelope, upper_envelope)
