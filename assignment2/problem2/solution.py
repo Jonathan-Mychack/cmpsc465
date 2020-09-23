@@ -147,6 +147,9 @@ def graham_scan_core(points):
                 continue
             elif orientation == 'turning left':
                 break
+            else:
+                s.pop()
+                break
         s.push(points[k])
     return s
 
