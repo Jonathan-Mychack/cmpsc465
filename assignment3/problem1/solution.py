@@ -1,14 +1,14 @@
 # Name: Jonathan Mychack
 # Course: CMPSC 462
-# Date Last Accessed: 10/12/20
+# Date Last Accessed: 10/14/20
 # Assignment 3, Problem 1
 
 def dfs(graph, visited_cc, order):
     num_cc = 0
     for i in range(len(order)):
-        for j in range(len(graph[order[i]-1])):
-            if visited_cc[order[i]-1] == 0:
-                num_cc += 1
+        if visited_cc[order[i]-1] == 0:
+            num_cc += 1
+            for j in range(len(graph[order[i]-1])):
                 explore(graph, graph[order[i]-1][j]-1, visited_cc, num_cc)
 
 def explore(graph, vertex, visited_cc, num_cc): #for the way we parse inputs, graph is adj_list and vertex is the index in adj_list
@@ -72,7 +72,6 @@ reverse_graph = get_specific_order(adj_list)
 dfs_with_timing(reverse_graph, visited, pre, post, postlist)
 specific_order = postlist[::-1]
 dfs(adj_list, visited_cc, specific_order)
-print(visited_cc)
 max = 0
 for i in range(len(visited_cc)):
     if visited_cc[i] > max:
