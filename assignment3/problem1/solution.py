@@ -1,7 +1,10 @@
-# Name: Jonathan Mychack
-# Course: CMPSC 462
-# Date Last Accessed: 10/14/20
-# Assignment 3, Problem 1
+"""
+Group members:
+Jonathan Mychack jtm5769
+Aashay Tambi aqt5406
+Jesse Bao jbb52
+Marcello Abbate mua350
+"""
 
 def dfs(graph, visited_cc, order):
     num_cc = 0
